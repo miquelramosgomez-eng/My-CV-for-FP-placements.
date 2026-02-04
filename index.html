@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSec Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --dark-grey: #0a0a0a;
+            --mid-grey: #1a1a1a;
+            --light-grey: #2a2a2a;
+            --border-grey: #3a3a3a;
+            --text-grey: #888888;
+            --text-light: #cccccc;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--black);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Button */
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: var(--light-grey);
+        }
+
+        /* Mobile Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 99;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Sidebar Glow */
+        .sidebar {
+            width: 280px;
+            background-color: var(--dark-grey);
+            border-right: 1px solid var(--light-grey);
+            padding: 5rem 0 2rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+            box-shadow: 
+                inset -1px 0 20px rgba(255,255,255,0.05),
+                -3px 0 25px rgba(255,255,255,0.1),
+                3px 0 25px rgba(255,255,255,0.08);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid var(--light-grey);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.8rem;
+            color: var(--white);
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-grey);
+            margin-top: 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 2rem;
+        }
+
+        .nav-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-grey);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.5rem 0;
+            border-left: 2px solid transparent;
+            padding-left: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--white);
+            border-left-color: var(--white);
+            background-color: var(--mid-grey);
+        }
+
+        /* Images top rigth, may put them as logo or link for social media
+        <div class="corner-images-container">
+            <img src="img/logo.jpg" alt="Logo" class="corner-image-small">
+            <img src="img/icono1.jpg" alt="Icon 1" class="corner-image-small">
+            <img src="img/icono2.jpg" alt="Icon 2" class="corner-image-small">
+            <img src="img/icono3.jpg" alt="Icon 3" class="corner-image-small">
+        </div>
+        
+        CSS For the logos :
+        */
+        .corner-images-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .corner-image-small {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--light-grey);
+            background-color: var(--dark-grey);
+            object-fit: cover;
+            transition: border-color 0.3s;
+        }
+
+        .corner-image-small:hover {
+            border-color: var(--white);
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            padding: 3rem;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+            max-width: 100%;
+        }
+
+        .content.full {
+            margin-left: 0;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-grey);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            border: 1px solid var(--light-grey);
+            padding: 0.8rem 1.5rem;
+            background-color: var(--dark-grey);
+        }
+
+        .back-button:hover {
+            color: var(--white);
+            border-color: var(--white);
+        }
+
+        .back-button::before {
+            content: '←';
+        }
+
+        /* Main Page Layout */
+        .hero-section {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid var(--light-grey);
+            object-fit: cover;
+            background-color: var(--mid-grey);
+            box-shadow: 
+                0 0 30px rgba(255,255,255,0.15),
+                0 0 60px rgba(255,255,255,0.08),
+                inset 0 0 20px rgba(255,255,255,0.05);
+        }
+
+        .profile-text {
+            text-align: left;
+        }
+
+        .profile-name {
+            font-size: 3rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+            font-weight: normal;
+            letter-spacing: -2px;
+        }
+
+        .profile-role {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-status {
+            font-size: 1.1rem;
+            color: var(--text-grey);
+        }
+
+        /* Blinking dots i need to check if the user understaund them, the effect dosnt convince me TO CHECK */
+        .dots {
+            display: inline-block;
+            margin-left: 2px;
+        }
+
+        .dots::after {
+            content: '...';
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        /* Expandable Boxes */
+        .expandable-nav {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .nav-box {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .nav-box-header {
+            padding: 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+
+        .nav-box-header:hover {
+            background-color: var(--mid-grey);
+        }
+
+        .nav-box.expanded .nav-box-header {
+            border-bottom-color: var(--light-grey);
+        }
+
+        .nav-box-title {
+            font-size: 1.8rem;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0;
+        }
+
+        .nav-box-title::before {
+            content: '>';
+            color: var(--text-grey);
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .nav-box.expanded .nav-box-title::before {
+            transform: rotate(90deg);
+        }
+
+        .nav-box-desc {
+            color: var(--text-grey);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            color: var(--text-grey);
+            transition: transform 0.3s;
+        }
+
+        .nav-box.expanded .expand-icon {
+            transform: rotate(45deg);
+            color: var(--white);
+        }
+
+        .nav-box-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            background-color: var(--mid-grey);
+        }
+
+        .nav-box.expanded .nav-box-content {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .nav-box-inner {
+            padding: 2rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .preview-item {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .preview-item strong {
+            color: var(--white);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .full-content {
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        .full-content h4 {
+            color: var(--white);
+            margin: 1.5rem 0 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .full-content ul {
+            margin-left: 1.5rem;
+            color: var(--text-grey);
+        }
+
+        .full-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Box */
+        .box {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .box-title {
+            color: var(--white);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--light-grey);
+            padding-bottom: 0.5rem;
+        }
+
+        /* About me Page */
+        .about-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .text-content {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .text-content p {
+            margin-bottom: 1rem;
+        }
+
+        /* Skills Page */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .skill-item {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .skill-item:hover {
+            border-color: var(--white);
+        }
+
+        .skill-name {
+            font-size: 1.1rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-desc {
+            font-size: 0.85rem;
+            color: var(--text-grey);
+            line-height: 1.4;
+        }
+
+        /* Projects Page */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .project-card {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 250px;
+            background-color: var(--mid-grey);
+            object-fit: cover;
+            border-bottom: 1px solid var(--light-grey);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .project-link {
+            color: var(--text-grey);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: 1px solid var(--light-grey);
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .project-link:hover {
+            color: var(--white);
+            border-color: var(--white);
+            background-color: var(--mid-grey);
+        }
+
+        /* Certifications Page */
+        .cert-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .cert-card {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--light-grey);
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .cert-content {
+            flex: 1;
+        }
+
+        .cert-title {
+            font-size: 1.3rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-desc {
+            color: var(--text-grey);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .cert-link {
+            color: var(--text-grey);
+            text-decoration: none;
+            border: 1px solid var(--light-grey);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .cert-link:hover {
+            color: var(--white);
+            border-color: var(--white);
+        }
+
+        /* Contact Page */
+        .contact-form {
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            color: var(--text-grey);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, textarea {
+            width: 100%;
+            background-color: var(--black);
+            border: 1px solid var(--light-grey);
+            color: var(--white);
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--white);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        button {
+            background-color: transparent;
+            color: var(--white);
+            border: 1px solid var(--white);
+            padding: 1rem 3rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:hover {
+            background-color: var(--white);
+            color: var(--black);
+        }
+
+        /* Messages form */
+        #form-status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--light-grey);
+            background-color: var(--dark-grey);
+            display: none;
+        }
+
+        /* Utility */
+        .page-title {
+            font-size: 2rem;
+            color: var(--white);
+            margin-bottom: 2rem;
+            font-weight: normal;
+            border-bottom: 1px solid var(--light-grey);
+            padding-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 75%;
+                max-width: 300px;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar:not(.hidden) {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 5rem 1.5rem 1.5rem;
+            }
+            
+            .content.full {
+                margin-left: 0;
+            }
+            
+            .profile-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-text {
+                text-align: center;
+            }
+            
+            .profile-name {
+                font-size: 2rem;
+            }
+            
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-box-header {
+                padding: 1.5rem;
+            }
+            
+            .nav-box-title {
+                font-size: 1.3rem;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .corner-images-container {
+                top: 1rem;
+                right: 1rem;
+                gap: 0.3rem;
+            }
+
+            .corner-image-small {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .corner-images-container {
+                top: 4rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Sidebar button -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- 
+    === The other corner imahes TO CHECK ===
+    <div class="corner-images-container">
+        <img src="img/logo.jpg" alt="Logo" class="corner-image-small">
+        <img src="img/icono1.jpg" alt="Icon 1" class="corner-image-small">
+        <img src="img/icono2.jpg" alt="Icon 2" class="corner-image-small">
+        <img src="img/icono3.jpg" alt="Icon 3" class="corner-image-small">
+    </div>
+    -->
+
+    <div class="layout">
+        <!-- Sidebar glow best idea i had so far-->
+        <aside class="sidebar hidden" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">CV</div>
+                <div class="sidebar-subtitle">FP SMX</div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="showPage('main')">Main</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('about')">About Me</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('skills')">Skills</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('projects')">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('certifications')">Certifications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showPage('contact')">Contact</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Area -->
+        <main class="content full" id="content">
+            
+            <!-- MAIN PAGE -->
+            <section id="main" class="page active">
+                <div class="hero-section">
+                    <div class="profile-container">
+                        <!-- pfp TO CHECK -->
+                        <img src="img/foto_perfil.jpg" alt="Profile" class="profile-image">
+                        
+                        <div class="profile-text">
+                            <h1 class="profile-name">Miquel Ramos</h1>
+                            <div class="profile-role">Cybersecurity Specialist</div>
+                            <div class="profile-status">in progress<span class="dots"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable-nav">
+                    <!-- About Me Expandable -->
+                    <div class="nav-box" id="box-about">
+                        <div class="nav-box-header" onclick="toggleBox('box-about')">
+                            <div>
+                                <div class="nav-box-title">About Me</div>
+                                <div class="nav-box-desc">Background</div>
+                            </div>
+                            <div class="expand-icon">+</div>
+                        </div>
+                        <div class="nav-box-content">
+                            <div class="nav-box-inner">
+                                <div class="full-content">
+                                    <h4>Who am I</h4>
+                                    <p>I'm a 16 year old passionate about cybersecurity, currently studying a medium FP degree at IES el Caminas. I will soon start my work placements...</p>
+                    
+                                    
+                                    <h4>Personal growth</h4>
+                                    <p>When I'm not in front of my computer, I usually spend time on one of my main hobbies: surfing. This sport has helped me improve not only my physical aptitudes but also my teaching and communication abilities. By assisting my instructor during surf classes, I have learned how to simplify complex concepts and explain them clearly...</p>
+                                    
+                                    <button onclick="showPage('about')" style="margin-top: 1rem;">See full Page →</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills Expandable -->
+                    <div class="nav-box" id="box-skills">
+                        <div class="nav-box-header" onclick="toggleBox('box-skills')">
+                            <div>
+                                <div class="nav-box-title">Skills</div>
+                                <div class="nav-box-desc">Technical Expertise</div>
+                            </div>
+                            <div class="expand-icon">+</div>
+                        </div>
+                        <div class="nav-box-content">
+                            <div class="nav-box-inner">
+                                <div class="preview-grid">
+                                    <div class="preview-item">
+                                        <strong>Penetration Testing</strong>
+                                        With software and selfmade tools.
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Malware Analysis</strong>
+                                        Its easier when you know how they work.
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>DIY</strong>
+                                        Making pentesting tools to save money ngl.
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Python Scripting</strong>
+                                        Mostly automation.
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Soldering</strong>
+                                        For reparations and DIY.
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Network Security</strong>
+                                        Firewall configuration, IDS/IPS...
+                                    </div>
+                                </div>
+                                <button onclick="showPage('skills')" style="margin-top: 1rem;">View All Skills →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects Expandable -->
+                    <div class="nav-box" id="box-projects">
+                        <div class="nav-box-header" onclick="toggleBox('box-projects')">
+                            <div>
+                                <div class="nav-box-title">Projects</div>
+                                <div class="nav-box-desc">Security Tools & DIY</div>
+                            </div>
+                            <div class="expand-icon">+</div>
+                        </div>
+                        <div class="nav-box-content">
+                            <div class="nav-box-inner">
+                                <div class="preview-grid">
+                                    <div class="preview-item">
+                                        <strong>DIY arduino RADAR</strong>
+                                        And other arduino base little proyects.
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Pentesting</strong>
+                                        Payloads, hammering, man in the middle...
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Linux</strong>
+                                        Dual boot, bash...
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>This website</strong>
+                                        I mean, its the website there isnt much to say.
+                                    </div>
+                                </div>
+                                <button onclick="showPage('projects')" style="margin-top: 1rem;">View All Projects →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certifications Expandable -->
+                    <div class="nav-box" id="box-certifications">
+                        <div class="nav-box-header" onclick="toggleBox('box-certifications')">
+                            <div>
+                                <div class="nav-box-title">Certifications</div>
+                                <div class="nav-box-desc">Professional Credentials</div>
+                            </div>
+                            <div class="expand-icon">+</div>
+                        </div>
+                        <div class="nav-box-content">
+                            <div class="nav-box-inner">
+                                <div class="preview-grid">
+                                    <div class="preview-item">
+                                        <strong>Python</strong>
+                                        PyStarted Level 2
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>English</strong>
+                                        Aiming for C2
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Unexpirience</strong>
+                                        Hungry for knowledge.
+                                    </div>
+                                </div>
+                                <button onclick="showPage('certifications')" style="margin-top: 1rem;">View All Certifications →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Expandable -->
+                    <div class="nav-box" id="box-contact">
+                        <div class="nav-box-header" onclick="toggleBox('box-contact')">
+                            <div>
+                                <div class="nav-box-title">Contact</div>
+                                <div class="nav-box-desc">Send a message</div>
+                            </div>
+                            <div class="expand-icon">+</div>
+                        </div>
+                        <div class="nav-box-content">
+                            <div class="nav-box-inner">
+                                <div class="full-content">
+                                    <p>Available for any questions about my follwing work placements.</p>
+                                    <p style="margin-top: 1rem;">
+                                        <strong>Email:</strong> miquel.ramos.gomez@gmail.com<br>
+                                        <strong>LinkedIn:</strong> https://www.linkedin.com/in/miquel-ramos-5995653aa<br>
+                                        <strong>GitHub:</strong> https://github.com/miquelramosgomez-eng<br>
+                                    </p>
+                                    <button onclick="showPage('contact')" style="margin-top: 1rem;">Open Contact Form →</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABOUT ME PAGE -->
+            <section id="about" class="page">
+                <h1 class="page-title">// About Me</h1>
+                
+                <div class="about-grid">
+                    <div class="box">
+                        <div class="box-title">Who am I</div>
+                        <div class="text-content">
+                            <p>I'm a 16 year old passionate about cybersecurity, currently studying a medium FP degree at IES el Caminas. I will soon start my work placements.</p>
+                            <p>For this reason, I decided to create this page, so it can serve as my curriculum. This page will allow me to update my IT knowledge and help make a good impression on the businesses I want to work with.</p>
+                            <p>Welcome, and feel free to be critical, I'm here to improve.</p>
+                        </div>
+                    </div>
+
+                    <div class="box">
+                        <div class="box-title">Background</div>
+                        <div class="text-content">
+                            <p>When I'm not in front of my computer, I usually spend time on one of my main hobbies: surfing. This sport has helped me improve not only my physical aptitudes but also my teaching and communication abilities. By assisting my instructor during surf classes, I have learned how to simplify complex concepts and explain them clearly.</p>
+                            <p>I believe communication is one of the most important skills in any workplace, which is why I always strive to develop it alongside my technical knowledge.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a class="back-button" onclick="showPage('main')">Back to Main</a>
+            </section>
+
+            <!-- SKILLS PAGE -->
+            <section id="skills" class="page">
+                <h1 class="page-title">// Skills</h1>
+                
+                <div class="skills-grid">
+                    <!-- Skill 1 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Penetration Testing</div>
+                        <div class="skill-desc"> With software and selfmade tools.</div>
+                    </div>
+                    
+                    <!-- Skill 2 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Malware Analysis</div>
+                        <div class="skill-desc">Its easier when you know how they work.</div>
+                    </div>
+                    
+                    <!-- Skill 3 -->
+                    <div class="skill-item">
+                        <div class="skill-name">DIY</div>
+                        <div class="skill-desc">Making pentesting tools to save money ngl.</div>
+                    </div>
+                    
+                    <!-- Skill 4 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Python Scripting</div>
+                        <div class="skill-desc">Mostly automation.</div>
+                    </div>
+                    
+                    <!-- Skill 5 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Soldering</div>
+                        <div class="skill-desc">For reparations and DIY.</div>
+                    </div>
+                    
+                    <!-- Skill 6 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Network Security</div>
+                        <div class="skill-desc">Firewall configuration, IDS/IPS deployment, and traffic analysis</div>
+                    </div>
+                    
+                    <!-- Skill 7 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Cryptography</div>
+                        <div class="skill-desc">Implementation and analysis of encryption protocols and secure communications</div>
+                    </div>
+                    
+                    <!-- Skill 8 -->
+                    <div class="skill-item">
+                        <div class="skill-name">OSINT</div>
+                        <div class="skill-desc">Breaking privacy with public sources.</div>
+                    </div>
+
+                    <!-- Skill 9 -->
+                    <div class="skill-item">
+                        <div class="skill-name">Comunication</div>
+                        <div class="skill-desc">Both spanish and english.</div>
+                    </div>
+                    <!-- X TO CHECK -->
+                </div>
+                
+                <a class="back-button" onclick="showPage('main')">Back to Main</a>
+            </section>
+
+            <!-- PROJECTS PAGE -->
+            <section id="projects" class="page">
+                <h1 class="page-title">// Projects</h1>
+                
+                <div class="projects-grid">
+                    <!-- Project 1 - Imagen: img/proyecto1.jpg - URL: https://ejemplo.com/enlace TO CHECK -->
+                    <article class="project-card">
+                        <img src="img/proyecto1.jpg" alt="Project 1" class="project-image">
+                        <div class="project-content">
+                            <h3 class="project-title">DIY arduino RADAR</h3>
+                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 2 - Imagen: img/proyecto2.jpg - URL: https://ejemplo.com/enlace TO CHECK IMG-->
+                    <article class="project-card">
+                        <img src="img/proyecto2.jpg" alt="Project 2" class="project-image">
+                        <div class="project-content">
+                            <h3 class="project-title">Pentesting</h3>
+                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 3 - Imagen: img/proyecto3.jpg - URL: https://ejemplo.com/enlace TO CHECK IMG-->
+                    <article class="project-card">
+                        <img src="img/proyecto3.jpg" alt="Project 3" class="project-image">
+                        <div class="project-content">
+                            <h3 class="project-title">Linux</h3>
+                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                        </div>
+                    </article>
+
+                    <!-- Project 4 - Imagen: img/proyecto4.jpg - URL: https://ejemplo.com/enlace TO CHECK IMG-->
+                    <article class="project-card">
+                        <img src="img/proyecto4.jpg" alt="Project 4" class="project-image">
+                        <div class="project-content">
+                            <h3 class="project-title">This website</h3>
+                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                        </div>
+                    </article>
+                    
+                    <!-- add more TO CHECK  -->
+                </div>
+                
+                <a class="back-button" onclick="showPage('main')">Back to Main</a>
+            </section>
+
+            <!-- CERTIFICATIONS PAGE -->
+            <section id="certifications" class="page">
+                <h1 class="page-title">// Certifications</h1>
+                
+                <div class="cert-grid">
+                    <!-- Certificado 1 - URL: https://ejemplo.com/enlace TO CHECK URL-->
+                    <div class="cert-card">
+                        <div class="cert-content">
+                            <h3 class="cert-title">PyStarted Level 2</h3>
+                            <p class="cert-desc">Starter level on python scripting.</p>
+                        </div>
+                        <a href="img/Python2Certificate.jpg" class="cert-link">Verify</a>
+                    </div>
+
+                    <!-- Certificado 2 - URL: https://ejemplo.com/enlace TO CHECK URL-->
+                    <div class="cert-card">
+                        <div class="cert-content">
+                            <h3 class="cert-title">Currently aiming for a C2</h3>
+                            <p class="cert-desc">Great comunications skills and wide knowlage in technical vocabulary.</p>
+                        </div>
+                        <a href="https://ejemplo.com/enlace" class="cert-link">Verify</a>
+                    </div>
+
+                    <!-- Certificado 3 - URL: https://ejemplo.com/enlace TO CHECK URL-->
+                    <div class="cert-card">
+                        <div class="cert-content">
+                            <h3 class="cert-title">Unexperience</h3>
+                            <p class="cert-desc">Hungry for knowledge.</p>
+                        </div>
+                        <a href="https://ejemplo.com/enlace" class="cert-link">See</a>
+                    </div>
+                    
+                    <!-- add more TO CHECK  -->
+                </div>
+                
+                <a class="back-button" onclick="showPage('main')">Back to Main</a>
+            </section>
+
+            <!-- messages with Formspree-->
+            <section id="contact" class="page">
+                <h1 class="page-title">// Contact</h1>
+                
+                <div class="box contact-form">
+                    <div class="box-title">Send a message</div>
+                    
+                    <form id="contact-form" action="https://formspree.io/f/xqelwoqr" method="POST">
+                        <div class="form-group">
+                            <label>Identity</label>
+                            <input type="text" name="name" placeholder="Your name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" placeholder="your@email.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Text</label>
+                            <textarea name="message" placeholder="Enter your message..." required></textarea>
+                        </div>
+                        
+                        <!-- when they send a message i redirect to TO CHECK URL-->
+                        <input type="hidden" name="_next" value="https://ejemplo.com/enlace">
+                        
+                        <button type="submit">Transmit</button>
+                    </form>
+                    <div id="form-status"></div>
+                </div>
+
+                <div class="box">
+                    <div class="box-title">Alternative Channels</div>
+                    <div class="text-content">
+                        <p>Email: miquel.ramos.gomez@gmail.com</p>
+                        <p>LinkedIn: https://www.linkedin.com/in/miquel-ramos-5995653aa</p>
+                        <p>GitHub: https://github.com/miquelramosgomez-eng</p>
+                    </div>
+                </div>
+                
+                <a class="back-button" onclick="showPage('main')">Back to Main</a>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Sidebar depends on screen
+        function initSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('hidden');
+                content.classList.add('full');
+            } else {
+                sidebar.classList.remove('hidden');
+                content.classList.remove('full');
+            }
+        }
+
+        // Boot
+        initSidebar();
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const content = document.getElementById('content');
+            
+            sidebar.classList.toggle('hidden');
+            
+            if (window.innerWidth <= 768) {
+                overlay.classList.toggle('active');
+            }
+            
+            if (sidebar.classList.contains('hidden')) {
+                content.classList.add('full');
+            } else {
+                content.classList.remove('full');
+            }
+        }
+
+        // page
+        function showPage(pageName) {
+            // if out of main close the boxes
+            if (pageName !== 'main') {
+                document.querySelectorAll('.nav-box').forEach(box => {
+                    box.classList.remove('expanded');
+                });
+            }
+            
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageName).classList.add('active');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('onclick').includes(pageName)) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Close sidebar on mobile after click
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.add('hidden');
+                document.getElementById('overlay').classList.remove('active');
+                document.getElementById('content').classList.add('full');
+            }
+            
+            // Scroll
+            window.scrollTo(0, 0);
+        }
+
+        // Toggle expandable boxes
+        function toggleBox(boxId) {
+            const box = document.getElementById(boxId);
+            const isExpanded = box.classList.contains('expanded');
+            
+            // Close all other boxes i need to work on this, weid movement sometimes TO CHECK
+            document.querySelectorAll('.nav-box').forEach(b => {
+                if (b.id !== boxId) {
+                    b.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current box
+            if (!isExpanded) {
+                box.classList.add('expanded');
+            } else {
+                box.classList.remove('expanded');
+            }
+        }
+
+        // Handle Formspree submission status
+        window.addEventListener('load', function() {
+            // Check if form was just submitted (Formspree redirects back)
+            if (window.location.search.includes('sent=true')) {
+                const status = document.getElementById('form-status');
+                status.style.display = 'block';
+                status.style.color = '#00ff41';
+                status.textContent = 'Message transmitted successfully.';
+                
+                // Clear the URL parameter
+                window.history.replaceState({}, document.title, window.location.pathname + '#contact');
+            }
+        });
+
+        // Handle resize
+        window.addEventListener('resize', initSidebar);
+
+        // Console log
+        console.log('%cSystem Secure', 'color: #fff; background: #000; padding: 10px; font-family: monospace;');
+    </script>
+</body>
+</html>

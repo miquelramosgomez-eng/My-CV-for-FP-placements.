@@ -758,6 +758,143 @@
                 right: 1rem;
             }
         }
+/* === BOTONES SOCIALES === */
+            .social-buttons-small {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1rem;
+                justify-content: flex-start;
+        }
+
+        .social-btn-small {
+                width: 50px;
+                height: 50px;
+                border: 1px solid var(--light-grey);
+                background-color: var(--dark-grey);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+        }
+
+        .social-btn-small:hover {
+                border-color: var(--white);
+                transform: scale(1.1);
+        }
+
+        .social-btn-small img {
+                width: 25px;
+                height: 25px;
+                object-fit: contain;
+                filter: grayscale(100%) brightness(0.7);
+                transition: all 0.3s ease;
+        }
+
+        .social-btn-small:hover img {
+                filter: grayscale(0%) brightness(1);
+        }
+
+        .social-buttons {
+                display: flex;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                margin-top: 1.5rem;
+                justify-content: center;
+        }
+
+        .social-btn {
+                width: 80px;
+                height: 80px;
+                border: 2px solid var(--light-grey);
+                background-color: var(--dark-grey);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+                text-decoration: none;
+        }
+
+        .social-btn:hover {
+                border-color: var(--white);
+                transform: translateY(-3px);
+                box-shadow: 0 5px 20px rgba(255,255,255,0.1);
+        }
+
+        .social-btn img {
+                width: 40px;
+                height: 40px;
+                object-fit: contain;
+                filter: grayscale(100%) brightness(0.8);
+                transition: all 0.3s ease;
+        }
+
+        .social-btn:hover img {
+                filter: grayscale(0%) brightness(1);
+        }
+
+        .social-btn::after {
+                content: attr(data-label);
+                position: absolute;
+                bottom: -25px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 0.7rem;
+                color: var(--text-grey);
+                opacity: 0;
+                transition: opacity 0.3s;
+                white-space: nowrap;
+        }
+
+        .social-btn:hover::after {
+                opacity: 1;
+        }
+
+        /* === CAJA UNDER DEVELOPMENT === */
+        .dev-notice {
+                background-color: var(--dark-grey);
+                border: 1px solid var(--light-grey);
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+                text-align: center;
+                color: var(--text-grey);
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+                grid-column: 1 / -1;
+                width: 100%;
+        }
+
+        .dev-notice::before {
+                content: '// ';
+                color: var(--white);
+        }
+
+        /* Responsive ajustes para botones */
+            @media (max-width: 768px) {
+                .social-btn {
+                    width: 60px;
+                    height: 60px;
+                }
+                .social-btn img {
+                    width: 30px;
+                    height: 30px;
+                }
+                .social-buttons-small {
+                    gap: 0.5rem;
+                }
+                .social-btn-small {
+                    width: 40px;
+                    height: 40px;
+                }
+                .social-btn-small img {
+                    width: 20px;
+                    height: 20px;
+                }
+        }
     </style>
 </head>
 <body>
@@ -818,7 +955,7 @@
                         <img src="img/foto_perfil.jpg" alt="Profile" class="profile-image">
                         
                         <div class="profile-text">
-                            <h1 class="profile-name">Miquel Ramos</h1>
+                            <h1 class="profile-name">Miquel Ramos Gómez</h1>
                             <div class="profile-role">Cybersecurity Specialist</div>
                             <div class="profile-status">in progress<span class="dots"></span></div>
                         </div>
@@ -906,8 +1043,8 @@
                             <div class="nav-box-inner">
                                 <div class="preview-grid">
                                     <div class="preview-item">
-                                        <strong>DIY arduino RADAR</strong>
-                                        And other arduino base little proyects.
+                                        <strong> Microcontrollers</strong>
+                                        Microcontrollers base proyects.
                                     </div>
                                     <div class="preview-item">
                                         <strong>Pentesting</strong>
@@ -970,11 +1107,17 @@
                             <div class="nav-box-inner">
                                 <div class="full-content">
                                     <p>Available for any questions about my follwing work placements.</p>
-                                    <p style="margin-top: 1rem;">
-                                        <strong>Email:</strong> miquel.ramos.gomez@gmail.com<br>
-                                        <strong>LinkedIn:</strong> https://www.linkedin.com/in/miquel-ramos-5995653aa<br>
-                                        <strong>GitHub:</strong> https://github.com/miquelramosgomez-eng<br>
-                                    </p>
+                                    <div class="social-buttons-small">
+                                    <a href="https://www.linkedin.com/in/miquel-ramos-5995653aa" target="_blank" class="social-btn-small" title="LinkedIn">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn">
+                                    </a>
+                                    <a href="https://github.com/miquelramosgomez-eng" target="_blank" class="social-btn-small" title="GitHub">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub">
+                                    </a>
+                                    <a href="mailto:miquel.ramos.gomez@gmail.com" class="social-btn-small" title="Email">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/552/552486.png" alt="Email">
+                                    </a>
+                                </div>
                                     <button onclick="showPage('contact')" style="margin-top: 1rem;">Open Contact Form →</button>
                                 </div>
                             </div>
@@ -1052,12 +1195,6 @@
                     
                     <!-- Skill 7 -->
                     <div class="skill-item">
-                        <div class="skill-name">Cryptography</div>
-                        <div class="skill-desc">Implementation and analysis of encryption protocols and secure communications</div>
-                    </div>
-                    
-                    <!-- Skill 8 -->
-                    <div class="skill-item">
                         <div class="skill-name">OSINT</div>
                         <div class="skill-desc">Breaking privacy with public sources.</div>
                     </div>
@@ -1067,7 +1204,7 @@
                         <div class="skill-name">Comunication</div>
                         <div class="skill-desc">Both spanish and english.</div>
                     </div>
-                    <!-- X TO CHECK -->
+                    <!-- + TO CHECK -->
                 </div>
                 
                 <a class="back-button" onclick="showPage('main')">Back to Main</a>
@@ -1076,38 +1213,40 @@
             <!-- PROJECTS PAGE -->
             <section id="projects" class="page">
                 <h1 class="page-title">// Projects</h1>
-                
+
+                <div class="dev-notice">Under development</div>
+
                 <div class="projects-grid">
                     <!-- Project 1 - Imagen: img/proyecto1.jpg - URL: https://ejemplo.com/enlace TO CHECK -->
                     <article class="project-card">
-                        <img src="img/proyecto1.jpg" alt="Project 1" class="project-image">
+                        <img src="img/micctrl.jpg" alt="Project 1" class="project-image">
                         <div class="project-content">
-                            <h3 class="project-title">DIY arduino RADAR</h3>
-                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                            <h3 class="project-title">Microcontrollers</h3>
+                            <!--<a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>-->
                         </div>
                     </article>
 
                     <!-- Project 2 - Imagen: img/proyecto2.jpg - URL: https://ejemplo.com/enlace TO CHECK IMG-->
                     <article class="project-card">
-                        <img src="img/proyecto2.jpg" alt="Project 2" class="project-image">
+                        <img src="img/pn2.jpg" alt="Project 2" class="project-image">
                         <div class="project-content">
                             <h3 class="project-title">Pentesting</h3>
-                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                            <!--<a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>-->
                         </div>
                     </article>
 
                     <!-- Project 3 - Imagen: img/proyecto3.jpg - URL: https://ejemplo.com/enlace TO CHECK IMG-->
                     <article class="project-card">
-                        <img src="img/proyecto3.jpg" alt="Project 3" class="project-image">
+                        <img src="img/linux.jpg" alt="Project 3" class="project-image">
                         <div class="project-content">
                             <h3 class="project-title">Linux</h3>
-                            <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
+                            <!--<a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>-->
                         </div>
                     </article>
 
                     <!-- Project 4 - Imagen: img/proyecto4.jpg - URL: https://ejemplo.com/enlace TO CHECK IMG-->
                     <article class="project-card">
-                        <img src="img/proyecto4.jpg" alt="Project 4" class="project-image">
+                        <img src="img/html5-2.jpg" alt="Project 4" class="project-image">
                         <div class="project-content">
                             <h3 class="project-title">This website</h3>
                             <a href="https://ejemplo.com/enlace" class="project-link">View Project →</a>
@@ -1140,7 +1279,7 @@
                             <h3 class="cert-title">Currently aiming for a C2</h3>
                             <p class="cert-desc">Great comunications skills and wide knowlage in technical vocabulary.</p>
                         </div>
-                        <a href="https://ejemplo.com/enlace" class="cert-link">Verify</a>
+                        <!-- <a href="https://ejemplo.com/enlace" class="cert-link">Verify</a>-->
                     </div>
 
                     <!-- Certificado 3 - URL: https://ejemplo.com/enlace TO CHECK URL-->
@@ -1149,7 +1288,7 @@
                             <h3 class="cert-title">Unexperience</h3>
                             <p class="cert-desc">Hungry for knowledge.</p>
                         </div>
-                        <a href="https://ejemplo.com/enlace" class="cert-link">See</a>
+                        <!--<a href="https://ejemplo.com/enlace" class="cert-link">See</a>-->
                     </div>
                     
                     <!-- add more TO CHECK  -->
@@ -1190,13 +1329,27 @@
                 </div>
 
                 <div class="box">
-                    <div class="box-title">Alternative Channels</div>
-                    <div class="text-content">
-                        <p>Email: miquel.ramos.gomez@gmail.com</p>
-                        <p>LinkedIn: https://www.linkedin.com/in/miquel-ramos-5995653aa</p>
-                        <p>GitHub: https://github.com/miquelramosgomez-eng</p>
+                <div class="box-title">Alternative Channels</div>
+                <div class="text-content">
+                    <p>Connect with me through these platforms:</p>
+                    
+                    <div class="social-buttons">
+                        <a href="https://www.linkedin.com/in/miquel-ramos-5995653aa" target="_blank" class="social-btn" data-label="LinkedIn" title="LinkedIn Profile">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn">
+                        </a>
+                        <a href="https://github.com/miquelramosgomez-eng" target="_blank" class="social-btn" data-label="GitHub" title="GitHub Profile">
+                            <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub">
+                        </a>
+                        <a href="mailto:miquel.ramos.gomez@gmail.com" class="social-btn" data-label="Email" title="Send Email">
+                            <img src="https://cdn-icons-png.flaticon.com/512/552/552486.png" alt="Email">
+                        </a>
                     </div>
-                </div>
+        
+        <p style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-grey);">
+            Email: miquel.ramos.gomez@gmail.com
+        </p>
+    </div>
+</div>
                 
                 <a class="back-button" onclick="showPage('main')">Back to Main</a>
             </section>
